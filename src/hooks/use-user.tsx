@@ -2,7 +2,7 @@ import React from "react";
 import type { AuthError, Session, User } from "@supabase/supabase-js";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { isSupabaseConfigured, supabase } from "#/lib/supabase/client";
+import { supabase } from "#/lib/supabase/client";
 
 function toastAuthError(error: AuthError) {
   const msg = error.message.toLowerCase();
@@ -59,8 +59,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [oauthProvider, setOauthProvider] = React.useState<OAuthProvider | null>(null);
 
   React.useEffect(() => {
-    if (!isSupabaseConfigured()) return;
-
     supabase.auth.getSession().then(({ data: { session: s } }) => {
       setSession(s);
     });
@@ -75,10 +73,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = React.useCallback(async (payload: LoginFormValues) => {
-    if (!isSupabaseConfigured()) {
-      toast.error("Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env.");
-      return false;
-    }
     setIsRequesting(true);
     try {
       const { error } = await supabase.auth.signInWithPassword({
@@ -97,10 +91,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signUp = React.useCallback(async (payload: LoginFormValues) => {
-    if (!isSupabaseConfigured()) {
-      toast.error("Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env.");
-      return false;
-    }
     setIsRequesting(true);
     try {
       const email = payload.email.trim();
@@ -133,10 +123,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signInWithOAuth = React.useCallback(async (provider: OAuthProvider) => {
-    if (!isSupabaseConfigured()) {
-      toast.error("Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env.");
-      return;
-    }
     setOauthProvider(provider);
     try {
       const redirectTo = `${window.location.origin}/dashboard`;

@@ -1,5 +1,5 @@
 import type { Contact } from "#/types/contact";
-import { isSupabaseConfigured, supabase } from "#/lib/supabase/client";
+import { supabase } from "#/lib/supabase/client";
 
 /** Row shape from `public.users` (snake_case + jsonb). Not `auth.users`. */
 export type UserRow = {
@@ -41,10 +41,6 @@ export function mapUserRowToContact(row: UserRow): Contact {
  * the signed-in user (client-side filter avoids PostgREST `.or()` quirks with UUIDs).
  */
 export async function fetchContacts(): Promise<Contact[]> {
-  if (!isSupabaseConfigured()) {
-    throw new Error("Supabase is not configured");
-  }
-
   const {
     data: { user: sessionUser },
   } = await supabase.auth.getUser();

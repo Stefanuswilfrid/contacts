@@ -10,7 +10,3 @@ export const supabase = createClient(url ?? "", anonKey ?? "", {
     detectSessionInUrl: true,
   },
 });
-
-export function isSupabaseConfigured(): boolean {
-  return Boolean(url?.trim() && anonKey?.trim());
-}

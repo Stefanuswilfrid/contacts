@@ -1,193 +1,50 @@
-Welcome to your new TanStack Start app! 
+# Contacts
 
-# Getting Started
+A small contacts directory UI: sign in with email/password or **Google** (OAuth), then browse and search a list backed by **Supabase**. Built with **TanStack Start** (React, file routes, SSR via **Nitro**), **Tailwind CSS**, and **@tanstack/react-virtual** for long lists.
 
-To run this application:
+---
+
+## Prerequisites
+
+- **Node.js** — **22.x** is recommended; lower versions (e.g. **20.x**) can still run the app, though npm may show engine warnings.
+- A **Supabase** project with Auth enabled and (for this app) a `public.users`-style table as described in your migrations / SQL notes
+
+
+
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-# Building For Production
 
-To build this application for production:
+## Environment variables
 
-```bash
-npm run build
-```
+Create a `.env` in the project root (see `.env.example` for the full template).
 
-## Testing
+**Required for the app (Vite — exposed to the browser):**
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+| Variable | Description |
+|----------|-------------|
+| `VITE_SUPABASE_URL` | Supabase project URL (Dashboard → **Project Settings** → **API** → **Project URL**) |
+| `VITE_SUPABASE_ANON_KEY` | Supabase **anon** `public` key (same screen) |
 
-```bash
-npm run test
-```
+---
 
-## Styling
+## What it does 
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
+1. **`/`** — Login and sign-up (`AuthForm`): email/password and Google OAuth via Supabase Auth.
+2. **`/dashboard`** — Contact list page: loads rows from Supabase (`public.users` / contacts mapping in `src/lib/supabase/contacts.ts`), search, and a virtualized list so scrolling stays smooth with many rows.
 
 
+## Key design decisions
 
-## Routing
+- **Virtualized contact list** — On the dashboard contact list, only visible rows are rendered and measured, so long lists stay responsive instead of mounting thousands of DOM nodes at once.
+- **Supabase as source of truth** — Contacts come from  DB 
+- **Route guards**  guests cannot open `/dashboard`; signed-in users are redirected away from `/`. 
+- **Auth** — **Email and password**  plus **Google OAuth** ; enable the Email and Google providers and redirect URLs in Supabase.
 
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
+---
 
-### Adding A Route
 
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).

@@ -1,8 +1,7 @@
 import { redirect } from "@tanstack/react-router";
-import { isSupabaseConfigured, supabase } from "#/lib/supabase/client";
+import { supabase } from "#/lib/supabase/client";
 
 async function getSessionUser() {
-  if (!isSupabaseConfigured()) return null;
   const {
     data: { session },
   } = await supabase.auth.getSession();
