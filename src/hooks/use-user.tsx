@@ -1,5 +1,6 @@
 import React from "react";
 import type { AuthError, Session, User } from "@supabase/supabase-js";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { isSupabaseConfigured, supabase } from "#/lib/supabase/client";
 
@@ -52,6 +53,7 @@ type AuthContextValue = {
 const AuthContext = React.createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate();
   const [session, setSession] = React.useState<Session | null>(null);
   const [isRequesting, setIsRequesting] = React.useState(false);
   const [oauthProvider, setOauthProvider] = React.useState<OAuthProvider | null>(null);
@@ -170,10 +172,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       toast.success("Signed out");
+      await navigate({ to: "/" });
     } finally {
       setIsRequesting(false);
     }
-  }, []);
+  }, [navigate]);
 
   const value = React.useMemo<AuthContextValue>(
     () => ({

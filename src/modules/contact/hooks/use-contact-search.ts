@@ -1,6 +1,5 @@
 import type { Contact } from "#/types/contact";
 import { filterContactsByQuery } from "#/modules/contact/utils/search";
-import { useMemo } from "react";
 
 export type ContactViewTab = "all" | "recent";
 
@@ -28,16 +27,11 @@ export function useContactSearch({
   activeTab,
   searchQuery,
 }: UseContactSearchArgs) {
-  const tabScoped = useMemo(
-    () => applyTabFilter(contacts, activeTab),
-    [contacts, activeTab],
-  );
-
-  const filteredContacts = useMemo(() => {
-    const q = searchQuery.trim();
-    if (!q) return tabScoped;
-    return filterContactsByQuery(tabScoped, q);
-  }, [tabScoped, searchQuery]);
+  const tabScoped = applyTabFilter(contacts, activeTab);
+  const q = searchQuery.trim();
+  const filteredContacts = q
+    ? filterContactsByQuery(tabScoped, q)
+    : tabScoped;
 
   return { filteredContacts, isSearchLoading: false };
 }

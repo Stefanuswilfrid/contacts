@@ -1,15 +1,8 @@
 import { Users, Sparkles, User, LogOut } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
 import { useUser } from "#/hooks/use-user";
 
 export function ContactPageHeader() {
-  const navigate = useNavigate();
   const { displayName, logout, isRequesting } = useUser();
-
-  async function handleLogout() {
-    await logout();
-    await navigate({ to: "/" });
-  }
 
   return (
     <header className="border-b border-border p-4 sm:p-6 bg-card">
@@ -41,7 +34,7 @@ export function ContactPageHeader() {
 
           <button
             type="button"
-            onClick={() => void handleLogout()}
+            onClick={() => void logout()}
             disabled={isRequesting}
             className="flex items-center gap-2 px-3 py-2.5 rounded-xl border-2 border-border font-mono text-sm text-muted-foreground hover:border-destructive/50 hover:text-destructive hover:bg-destructive/5 transition-all disabled:opacity-50 disabled:pointer-events-none"
             title="Sign out"
