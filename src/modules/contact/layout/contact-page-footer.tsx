@@ -18,8 +18,6 @@ export function ContactPageFooter({ displayName }: ContactPageFooterProps) {
           <span>
             made with <span className="text-primary">{"<3"}</span>
           </span>
-          <span>|</span>
-          <span>v1.0.0</span>
         </div>
       </div>
     </footer>

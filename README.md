@@ -44,7 +44,3 @@ Create a `.env` in the project root (see `.env.example` for the full template).
 - **Supabase as source of truth** — Contacts come from  DB 
 - **Route guards**  guests cannot open `/dashboard`; signed-in users are redirected away from `/`. 
 - **Auth** — **Email and password**  plus **Google OAuth** ; enable the Email and Google providers and redirect URLs in Supabase.
-
----
-
-
