@@ -6,19 +6,13 @@ import { useUser } from "#/hooks/use-user";
 import { useContacts } from "#/modules/contact/hooks/use-contacts";
 import { useContactSearch, type ContactViewTab } from "#/modules/contact/hooks/use-contact-search";
 import { ContactPageSearch } from "../components/contact-page-search";
-import { ContactPageFooter } from "./contact-page-footer";
+import { ContactPageFooter } from "../layout/contact-page-footer";
 import { ContactPageHeader } from "../layout/contact-page-header";
 import { ContactPageMain } from "../components/contact-page-main";
 import { ContactPageTabs } from "../components/contact-page-tabs";
 
 export function ContactPage() {
-  const { user } = useUser();
-  const displayName =
-    user?.email ??
-    (typeof user?.user_metadata?.full_name === "string"
-      ? user.user_metadata.full_name
-      : null) ??
-    "guest";
+  const { displayName } = useUser();
   const { contacts, setContacts, status: contactsStatus, error: contactsError } =
     useContacts();
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);

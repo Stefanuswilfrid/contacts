@@ -1,4 +1,5 @@
 import type { Contact } from "#/types/contact";
+import { filterContactsByQuery } from "#/modules/contact/utils/search";
 import { useMemo } from "react";
 
 export type ContactViewTab = "all" | "recent";
@@ -14,19 +15,6 @@ function applyTabFilter(contacts: Contact[], activeTab: ContactViewTab): Contact
   }
 
   return result;
-}
-
-function localTextFilter(contacts: Contact[], query: string): Contact[] {
-  const q = query.trim().toLowerCase();
-  if (!q) return contacts;
-  return contacts.filter(
-    (contact) =>
-      contact.name.toLowerCase().includes(q) ||
-      contact.username.toLowerCase().includes(q) ||
-      contact.email.toLowerCase().includes(q) ||
-      contact.company.name.toLowerCase().includes(q) ||
-      contact.address.city.toLowerCase().includes(q),
-  );
 }
 
 type UseContactSearchArgs = {
@@ -48,7 +36,7 @@ export function useContactSearch({
   const filteredContacts = useMemo(() => {
     const q = searchQuery.trim();
     if (!q) return tabScoped;
-    return localTextFilter(tabScoped, q);
+    return filterContactsByQuery(tabScoped, q);
   }, [tabScoped, searchQuery]);
 
   return { filteredContacts, isSearchLoading: false };

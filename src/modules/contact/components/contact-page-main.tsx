@@ -10,8 +10,8 @@ import type { ContactViewTab } from "#/modules/contact/hooks/use-contact-search"
 type ContactListProps = {
   activeTab: ContactViewTab;
   contacts: Contact[];
-  status?: ContactsLoadStatus;
-  error?: string | null;
+  status: ContactsLoadStatus;
+  error: string | null;
   onSelect: (contact: Contact) => void;
 };
 
@@ -41,7 +41,9 @@ export function ContactPageMain({ list, details }: ContactPageMainProps) {
           </div>
         ) : list.status === "error" ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
-            <p className="font-mono text-sm text-destructive">{list.error ?? "could not load contacts"}</p>
+            <p className="font-mono text-sm text-destructive">
+              {list.error ?? "could not load contacts"}
+            </p>
           </div>
         ) : list.contacts.length === 0 ? (
           <div className="flex-1 overflow-y-auto p-8 text-center">

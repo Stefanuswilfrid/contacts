@@ -3,7 +3,6 @@ import type { AuthError, Session, User } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { isSupabaseConfigured, supabase } from "#/lib/supabase/client";
 
-/** Supabase caps auth emails per hour; surface a clearer message than the raw API text. */
 function toastAuthError(error: AuthError) {
   const msg = error.message.toLowerCase();
   const rateLimited =
@@ -27,8 +26,20 @@ export type LoginFormValues = {
 
 type OAuthProvider = "github" | "google";
 
+function getDisplayName(user: User | null): string {
+  if (!user) return "guest";
+  return (
+    user.email ??
+    (typeof user.user_metadata?.full_name === "string"
+      ? user.user_metadata.full_name
+      : null) ??
+    "guest"
+  );
+}
+
 type AuthContextValue = {
   user: User | null;
+  displayName: string;
   session: Session | null;
   login: (payload: LoginFormValues) => Promise<boolean>;
   signUp: (payload: LoginFormValues) => Promise<boolean>;
@@ -167,6 +178,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = React.useMemo<AuthContextValue>(
     () => ({
       user: session?.user ?? null,
+      displayName: getDisplayName(session?.user ?? null),
       session,
       login,
       signUp,

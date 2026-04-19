@@ -4,13 +4,7 @@ import { useUser } from "#/hooks/use-user";
 
 export function ContactPageHeader() {
   const navigate = useNavigate();
-  const { user, logout, isRequesting } = useUser();
-  const displayName =
-    user?.email ??
-    (typeof user?.user_metadata?.full_name === "string"
-      ? user.user_metadata.full_name
-      : null) ??
-    "guest";
+  const { displayName, logout, isRequesting } = useUser();
 
   async function handleLogout() {
     await logout();
