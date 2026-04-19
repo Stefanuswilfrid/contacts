@@ -7,6 +7,9 @@ import { useUser } from "#/hooks/use-user";
 
 export type AuthMode = "login" | "signUp";
 
+const DEMO_LOGIN_EMAIL = "sincere@april.biz";
+const DEMO_LOGIN_PASSWORD = "DemoDemo11!";
+
 export function AuthForm({ initialMode = "login" }: { initialMode?: AuthMode }) {
   const navigate = useNavigate();
   const { login, signUp, isRequesting, signInWithOAuth, oauthProvider } = useUser();
@@ -53,6 +56,17 @@ export function AuthForm({ initialMode = "login" }: { initialMode?: AuthMode }) 
 
         <div className="bg-card rounded-2xl border border-border p-8 shadow-xl">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {!isSignUp ? (
+              <p
+                className="rounded-lg border border-border bg-muted/30 px-3 py-2 text-xs font-mono text-muted-foreground leading-relaxed"
+                role="note"
+              >
+                <span className="font-medium text-foreground/90 block">demo user</span>
+                
+                email: {DEMO_LOGIN_EMAIL}  password: {DEMO_LOGIN_PASSWORD}
+              </p>
+            ) : null}
+
             <InputField
               fieldId="email"
               label="email"
